@@ -66,7 +66,7 @@ const Item = (itemProps: ItemProps) => {
         }}
         className={['object-cover object-center min-h-[225px] rounded', image === fallbackImage && 'animate-pulse'].filter((i) => i).join(' ')}
       />
-      {name ? (
+      {name && name !== 'Placeholder' ? (
         <h3 className="mt-3 max-w-[150px] text-gray-300">{name}</h3>
       ) : (
         <div className="mt-3 w-[150px] h-[20px] bg-white/25 animate-pulse"></div>
