@@ -27,11 +27,13 @@ const Item = (itemProps: ItemProps) => {
   const router = useRouter()
   const id = itemProps?.id ?? -1
   const name = itemProps?.name ?? itemProps?.original_title ?? itemProps?.title ?? 'Placeholder'
-  const getImage = () => {
+  const getImage = (flag = 0) => {
     return itemProps?.image
       ? itemProps?.image?.medium ?? itemProps?.image?.original
       : itemProps?.poster_path
-      ? `/l0-opt?quality=10&img=https://image.tmdb.org/t/p/original${itemProps?.poster_path}`
+      ? flag === 1
+        ? `https://image.tmdb.org/t/p/original${itemProps?.poster_path}`
+        : `/l0-opt?quality=10&img=https://image.tmdb.org/t/p/original${itemProps?.poster_path}`
       : fallbackImage
   }
   const image = getImage()
@@ -63,7 +65,7 @@ const Item = (itemProps: ItemProps) => {
         loading="lazy"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null
-          const image = getImage()
+          const image = getImage(1)
           if (image) currentTarget.src = image
         }}
         className={['object-cover object-center min-h-[225px] rounded', image === fallbackImage && 'animate-pulse'].filter((i) => i).join(' ')}
