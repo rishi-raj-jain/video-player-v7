@@ -1,9 +1,9 @@
 'use client'
 
 import useOnScreen from './useOnScreen'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { prefetch } from '@edgio/prefetch/window'
-import { useEffect, useRef, useState } from 'react'
 
 const fallbackImage =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH0AAACmCAMAAADAp3D7AAAAA1BMVEWAgICQdD0xAAAAK0lEQVR4nO3BMQEAAADCoPVP7W8GoAAAAAAAAAAAAAAAAAAAAAAAAAAAeANRtAABpXaWUQAAAABJRU5ErkJggg=='
@@ -27,13 +27,14 @@ const Item = (itemProps: ItemProps) => {
   const router = useRouter()
   const id = itemProps?.id ?? -1
   const name = itemProps?.name ?? itemProps?.original_title ?? itemProps?.title ?? 'Placeholder'
-  const [image, setImage] = useState(
-    itemProps?.image
+  const getImage = () => {
+    return itemProps?.image
       ? itemProps?.image?.medium ?? itemProps?.image?.original
       : itemProps?.poster_path
       ? `/l0-opt?quality=10&img=https://image.tmdb.org/t/p/original${itemProps?.poster_path}`
       : fallbackImage
-  )
+  }
+  const image = getImage()
   const ref = useRef<HTMLAnchorElement>(null)
   const isVisible = useOnScreen(ref)
   useEffect(() => {
@@ -62,7 +63,8 @@ const Item = (itemProps: ItemProps) => {
         loading="lazy"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null
-          currentTarget.src = itemProps?.poster_path ? `https://image.tmdb.org/t/p/original${itemProps?.poster_path}` : fallbackImage
+          const image = getImage()
+          if (image) currentTarget.src = image
         }}
         className={['object-cover object-center min-h-[225px] rounded', image === fallbackImage && 'animate-pulse'].filter((i) => i).join(' ')}
       />
