@@ -60,14 +60,9 @@ const Item = (itemProps: ItemProps) => {
         width="150px"
         height="225px"
         loading="lazy"
-        onError={() => {
-          setImage(
-            itemProps?.image
-              ? itemProps?.image?.medium ?? itemProps?.image?.original
-              : itemProps?.poster_path
-              ? `https://image.tmdb.org/t/p/original${itemProps?.poster_path}`
-              : fallbackImage
-          )
+        onError={({ currentTarget }) => {
+          currentTarget.onerror = null
+          currentTarget.src = itemProps?.poster_path ? `https://image.tmdb.org/t/p/original${itemProps?.poster_path}` : fallbackImage
         }}
         className={['object-cover object-center min-h-[225px] rounded', image === fallbackImage && 'animate-pulse'].filter((i) => i).join(' ')}
       />
