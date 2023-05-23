@@ -1,6 +1,5 @@
 module.exports = {
-  connector: './edgio',
-  routes: './edgio/routes.ts',
+  connector: '@edgio/next',
   origins: [
     {
       name: 'api',

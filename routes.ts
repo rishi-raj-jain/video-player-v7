@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
-import { Router, edgioRoutes } from '@edgio/core'
-import { isProductionBuild } from '@edgio/core/environment'
+import { Router } from '@edgio/core'
+import { nextRoutes } from '@edgio/next'
 
 dotenv.config({
   path: '.env.production',
@@ -8,17 +8,7 @@ dotenv.config({
 
 const router = new Router()
 
-router.match('/:path*', ({ cache, renderWithApp }) => {
-  cache({
-    edge: false,
-    browser: false,
-  })
-  renderWithApp()
-})
-
-router.match('/service-worker.js', ({ serviceWorker }) => {
-  serviceWorker('.edgio/temp/service-worker.js')
-})
+router.use(nextRoutes)
 
 router.get('/l0-api/:path*', ({ proxy, cache, removeUpstreamResponseHeader }) => {
   removeUpstreamResponseHeader('set-cookie')
@@ -84,15 +74,5 @@ router.get('/_next/image', ({ cache, renderWithApp, removeUpstreamResponseHeader
   })
   renderWithApp()
 })
-
-if (isProductionBuild()) {
-  router.static('public')
-
-  router.match('/_next/static/:path*', ({ serveStatic }) => {
-    serveStatic('.next/static/:path*')
-  })
-}
-
-router.use(edgioRoutes)
 
 module.exports = router
